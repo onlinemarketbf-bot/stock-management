@@ -137,7 +137,7 @@ class StockManager {
             const total = item.quantity * item.price;
 
             return `
-                <tr class="${rowClass}">
+                <tr class="${rowClass}" data-item-id="${item.id}">
                     <td>${this.escapeHtml(item.name)}</td>
                     <td>${this.escapeHtml(item.category)}</td>
                     <td>${this.escapeHtml(item.size)}</td>
@@ -146,16 +146,41 @@ class StockManager {
                     <td>${this.formatCurrency(item.price)}</td>
                     <td>${this.formatCurrency(total)}</td>
                     <td class="actions">
-                        <button class="btn btn-edit" onclick="stockManager.editItem('${item.id}')">
+                        <button class="btn btn-edit" data-action="edit">
                             ✏️ Modifier
                         </button>
-                        <button class="btn btn-delete" onclick="stockManager.deleteItem('${item.id}')">
+                        <button class="btn btn-delete" data-action="delete">
                             🗑️ Supprimer
                         </button>
                     </td>
                 </tr>
             `;
         }).join('');
+
+        // Add event delegation for edit and delete buttons
+        this.setupTableEventListeners();
+    }
+
+    setupTableEventListeners() {
+        const tbody = document.getElementById('stockTableBody');
+        
+        tbody.removeEventListener('click', this.handleTableClick);
+        this.handleTableClick = (e) => {
+            const button = e.target.closest('button[data-action]');
+            if (!button) return;
+
+            const row = button.closest('tr');
+            const itemId = row.dataset.itemId;
+            const action = button.dataset.action;
+
+            if (action === 'edit') {
+                this.editItem(itemId);
+            } else if (action === 'delete') {
+                this.deleteItem(itemId);
+            }
+        };
+        
+        tbody.addEventListener('click', this.handleTableClick);
     }
 
     formatCurrency(value) {
@@ -209,32 +234,6 @@ class StockManager {
         }, 3000);
     }
 }
-
-// Add CSS animations
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    @keyframes slideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);
 
 // Initialize the application
 const stockManager = new StockManager();
