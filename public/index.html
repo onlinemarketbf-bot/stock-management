@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Stock - Boutique de Vêtements</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🏪 Gestion de Stock</h1>
+                <p class="subtitle">Boutique de Vêtements</p>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="dashboard">
+                <span>📊</span> Tableau de Bord
+            </button>
+            <button class="tab-btn" data-tab="products">
+                <span>📦</span> Produits
+            </button>
+            <button class="tab-btn" data-tab="stock">
+                <span>📥📤</span> Mouvements
+            </button>
+            <button class="tab-btn" data-tab="reports">
+                <span>📈</span> Rapports
+            </button>
+        </nav>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <h2>Tableau de Bord</h2>
+            
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <h3 id="total-products">0</h3>
+                        <p>Produits</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-info">
+                        <h3 id="stock-value">0 FCFA</h3>
+                        <p>Valeur du Stock</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-info">
+                        <h3 id="total-revenue">0 FCFA</h3>
+                        <p>Chiffre d'Affaires</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💵</div>
+                    <div class="stat-info">
+                        <h3 id="total-profit">0 FCFA</h3>
+                        <p>Bénéfices</p>
+                    </div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-info">
+                        <h3 id="low-stock">0</h3>
+                        <p>Stock Faible</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>Ventes par Période</h3>
+                    <canvas id="salesChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Bénéfices par Produit</h3>
+                    <canvas id="profitChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="products" class="tab-content">
+            <div class="tab-header">
+                <h2>Gestion des Produits</h2>
+                <button class="btn btn-primary" onclick="showProductModal()">
+                    ➕ Nouveau Produit
+                </button>
+            </div>
+
+            <div class="filters">
+                <input type="text" id="search-product" placeholder="🔍 Rechercher un produit...">
+                <select id="filter-category">
+                    <option value="">Toutes les catégories</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Catégorie</th>
+                            <th>Quantité</th>
+                            <th>Prix d'Achat</th>
+                            <th>Prix de Vente</th>
+                            <th>Fournisseur</th>
+                            <th>Marge Unitaire</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table-body">
+                        <!-- Products will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Stock Movements Tab -->
+        <div id="stock" class="tab-content">
+            <div class="tab-header">
+                <h2>Mouvements de Stock</h2>
+                <div>
+                    <button class="btn btn-success" onclick="showStockModal('entry')">
+                        📥 Entrée
+                    </button>
+                    <button class="btn btn-danger" onclick="showStockModal('exit')">
+                        📤 Sortie
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Produit</th>
+                            <th>Catégorie</th>
+                            <th>Quantité</th>
+                            <th>Prix Unitaire</th>
+                            <th>Montant Total</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody id="movements-table-body">
+                        <!-- Movements will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <h2>Rapports et Analyses</h2>
+            
+            <div class="report-controls">
+                <div class="control-group">
+                    <label>Type de Rapport:</label>
+                    <select id="report-type">
+                        <option value="monthly">Mensuel</option>
+                        <option value="annual">Annuel</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Année:</label>
+                    <input type="number" id="report-year" value="2024" min="2020" max="2030">
+                </div>
+                <div class="control-group" id="month-selector">
+                    <label>Mois:</label>
+                    <select id="report-month">
+                        <option value="1">Janvier</option>
+                        <option value="2">Février</option>
+                        <option value="3">Mars</option>
+                        <option value="4">Avril</option>
+                        <option value="5">Mai</option>
+                        <option value="6">Juin</option>
+                        <option value="7">Juillet</option>
+                        <option value="8">Août</option>
+                        <option value="9">Septembre</option>
+                        <option value="10">Octobre</option>
+                        <option value="11">Novembre</option>
+                        <option value="12">Décembre</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="generateReport()">
+                    📊 Générer Rapport
+                </button>
+            </div>
+
+            <div id="report-results" class="report-results">
+                <!-- Report results will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="product-modal-title">Nouveau Produit</h3>
+                <span class="close" onclick="closeModal('product-modal')">&times;</span>
+            </div>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="form-group">
+                    <label>Nom du Produit *</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Catégorie *</label>
+                    <input type="text" id="product-category" list="categories-list" required>
+                    <datalist id="categories-list"></datalist>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Quantité *</label>
+                        <input type="number" id="product-quantity" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Prix d'Achat (FCFA) *</label>
+                        <input type="number" id="product-purchase-price" min="0" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Prix de Vente (FCFA) *</label>
+                        <input type="number" id="product-selling-price" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Fournisseur</label>
+                        <input type="text" id="product-supplier">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('product-modal')">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Stock Movement Modal -->
+    <div id="stock-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="stock-modal-title">Mouvement de Stock</h3>
+                <span class="close" onclick="closeModal('stock-modal')">&times;</span>
+            </div>
+            <form id="stock-form">
+                <input type="hidden" id="stock-movement-type">
+                <div class="form-group">
+                    <label>Produit *</label>
+                    <select id="stock-product-id" required>
+                        <option value="">Sélectionnez un produit...</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Quantité *</label>
+                        <input type="number" id="stock-quantity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Prix Unitaire (FCFA) *</label>
+                        <input type="number" id="stock-unit-price" min="0" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Note</label>
+                    <textarea id="stock-note" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('stock-modal')">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
