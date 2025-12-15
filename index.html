@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Stock - Boutique de Vêtements</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📦 Gestion de Stock</h1>
+            <p class="subtitle">Boutique de Vêtements</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Articles</h3>
+                <p id="totalItems">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Stock Total</h3>
+                <p id="totalStock">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Valeur Stock</h3>
+                <p id="totalValue">0 FCFA</p>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <section class="form-section">
+                <h2>Ajouter/Modifier un Article</h2>
+                <form id="itemForm">
+                    <input type="hidden" id="itemId">
+                    
+                    <div class="form-group">
+                        <label for="itemName">Nom de l'article *</label>
+                        <input type="text" id="itemName" required placeholder="Ex: T-shirt Nike">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itemCategory">Catégorie *</label>
+                            <select id="itemCategory" required>
+                                <option value="">Sélectionner...</option>
+                                <option value="T-shirts">T-shirts</option>
+                                <option value="Pantalons">Pantalons</option>
+                                <option value="Robes">Robes</option>
+                                <option value="Chemises">Chemises</option>
+                                <option value="Chaussures">Chaussures</option>
+                                <option value="Accessoires">Accessoires</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="itemSize">Taille *</label>
+                            <select id="itemSize" required>
+                                <option value="">Sélectionner...</option>
+                                <option value="XS">XS</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itemQuantity">Quantité *</label>
+                            <input type="number" id="itemQuantity" required min="0" placeholder="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="itemPrice">Prix (FCFA) *</label>
+                            <input type="number" id="itemPrice" required min="0" step="100" placeholder="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemColor">Couleur</label>
+                        <input type="text" id="itemColor" placeholder="Ex: Bleu, Rouge, Noir">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <span id="submitBtnText">Ajouter</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">Annuler</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="table-section">
+                <div class="table-header">
+                    <h2>Liste des Articles</h2>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 Rechercher...">
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table id="stockTable">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Catégorie</th>
+                                <th>Taille</th>
+                                <th>Couleur</th>
+                                <th>Quantité</th>
+                                <th>Prix (FCFA)</th>
+                                <th>Total (FCFA)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stockTableBody">
+                            <tr class="empty-state">
+                                <td colspan="8">Aucun article en stock. Ajoutez votre premier article!</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>© 2025 OnlineMarketBF - Gestion de Stock</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
