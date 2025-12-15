@@ -10,4 +10,5 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
+      - DATA_DIR=/app/data
     restart: unless-stopped

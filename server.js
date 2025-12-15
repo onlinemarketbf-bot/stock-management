@@ -3,6 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,12 +13,19 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
+// Ensure data directory exists
+const dataDir = process.env.DATA_DIR || './';
+if (dataDir !== './' && !fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
 // Database setup
-const db = new sqlite3.Database('./stock.db', (err) => {
+const dbPath = path.join(dataDir, 'stock.db');
+const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.error('Error opening database', err);
   } else {
-    console.log('Database connected');
+    console.log(`Database connected at ${dbPath}`);
     initDatabase();
   }
 });
@@ -213,40 +221,74 @@ app.get('/api/movements/:productId', (req, res) => {
 app.post('/api/movements', (req, res) => {
   const { product_id, type, quantity, reason, user } = req.body;
   
+  // Input validation
+  if (!product_id || !type || !quantity) {
+    res.status(400).json({ error: 'product_id, type, and quantity are required' });
+    return;
+  }
+  
+  if (!['IN', 'OUT'].includes(type)) {
+    res.status(400).json({ error: 'type must be either IN or OUT' });
+    return;
+  }
+  
+  if (quantity <= 0 || !Number.isInteger(quantity)) {
+    res.status(400).json({ error: 'quantity must be a positive integer' });
+    return;
+  }
+  
   db.serialize(() => {
-    db.run('BEGIN TRANSACTION');
-    
-    // Insert movement
-    db.run(
-      'INSERT INTO stock_movements (product_id, type, quantity, reason, user) VALUES (?, ?, ?, ?, ?)',
-      [product_id, type, quantity, reason, user],
-      function(err) {
-        if (err) {
-          db.run('ROLLBACK');
-          res.status(500).json({ error: err.message });
-          return;
-        }
-        
-        const movementId = this.lastID;
-        
-        // Update product quantity
-        const quantityChange = type === 'IN' ? quantity : -quantity;
-        db.run(
-          'UPDATE products SET quantity = quantity + ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-          [quantityChange, product_id],
-          function(err) {
-            if (err) {
-              db.run('ROLLBACK');
-              res.status(500).json({ error: err.message });
-              return;
-            }
-            
-            db.run('COMMIT');
-            res.json({ id: movementId, ...req.body });
-          }
-        );
+    // First, check if product exists and has sufficient stock for OUT operations
+    db.get('SELECT id, quantity FROM products WHERE id = ?', [product_id], (err, product) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
       }
-    );
+      
+      if (!product) {
+        res.status(404).json({ error: 'Product not found' });
+        return;
+      }
+      
+      if (type === 'OUT' && product.quantity < quantity) {
+        res.status(400).json({ error: 'Insufficient stock for this operation' });
+        return;
+      }
+      
+      db.run('BEGIN TRANSACTION');
+      
+      // Insert movement
+      db.run(
+        'INSERT INTO stock_movements (product_id, type, quantity, reason, user) VALUES (?, ?, ?, ?, ?)',
+        [product_id, type, quantity, reason, user],
+        function(err) {
+          if (err) {
+            db.run('ROLLBACK');
+            res.status(500).json({ error: err.message });
+            return;
+          }
+          
+          const movementId = this.lastID;
+          
+          // Update product quantity
+          const quantityChange = type === 'IN' ? quantity : -quantity;
+          db.run(
+            'UPDATE products SET quantity = quantity + ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            [quantityChange, product_id],
+            function(err) {
+              if (err) {
+                db.run('ROLLBACK');
+                res.status(500).json({ error: err.message });
+                return;
+              }
+              
+              db.run('COMMIT');
+              res.json({ id: movementId, ...req.body });
+            }
+          );
+        }
+      );
+    });
   });
 });
 
