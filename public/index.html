@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Stock - Boutique de Vêtements</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>📦 Stock Manager</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <span class="icon">📊</span> Tableau de bord
+                </a>
+                <a href="#" class="nav-item" data-view="products">
+                    <span class="icon">👕</span> Produits
+                </a>
+                <a href="#" class="nav-item" data-view="categories">
+                    <span class="icon">🏷️</span> Catégories
+                </a>
+                <a href="#" class="nav-item" data-view="movements">
+                    <span class="icon">📋</span> Mouvements
+                </a>
+                <a href="#" class="nav-item" data-view="alerts">
+                    <span class="icon">⚠️</span> Alertes Stock
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1 id="page-title">Tableau de bord</h1>
+                <div class="user-info">
+                    <span>👤 Administrateur</span>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Dashboard View -->
+                <div id="dashboard-view" class="view active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">📦</div>
+                            <div class="stat-info">
+                                <h3 id="stat-total-products">0</h3>
+                                <p>Produits au total</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-info">
+                                <h3 id="stat-total-stock">0</h3>
+                                <p>Articles en stock</p>
+                            </div>
+                        </div>
+                        <div class="stat-card alert">
+                            <div class="stat-icon">⚠️</div>
+                            <div class="stat-info">
+                                <h3 id="stat-low-stock">0</h3>
+                                <p>Stock faible</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-info">
+                                <h3 id="stat-total-value">0 FCFA</h3>
+                                <p>Valeur totale</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-section">
+                        <h2>Activité récente</h2>
+                        <div id="recent-movements" class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Produit</th>
+                                        <th>Type</th>
+                                        <th>Quantité</th>
+                                        <th>Motif</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-movements-body">
+                                    <tr>
+                                        <td colspan="5" class="text-center">Chargement...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products View -->
+                <div id="products-view" class="view">
+                    <div class="view-header">
+                        <button class="btn btn-primary" id="add-product-btn">➕ Ajouter un produit</button>
+                    </div>
+                    <div id="products-list" class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Référence</th>
+                                    <th>Nom</th>
+                                    <th>Catégorie</th>
+                                    <th>Prix</th>
+                                    <th>Quantité</th>
+                                    <th>Stock Min</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-body">
+                                <tr>
+                                    <td colspan="7" class="text-center">Chargement...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Categories View -->
+                <div id="categories-view" class="view">
+                    <div class="view-header">
+                        <button class="btn btn-primary" id="add-category-btn">➕ Ajouter une catégorie</button>
+                    </div>
+                    <div id="categories-list" class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categories-body">
+                                <tr>
+                                    <td colspan="3" class="text-center">Chargement...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Movements View -->
+                <div id="movements-view" class="view">
+                    <div class="view-header">
+                        <button class="btn btn-primary" id="add-movement-btn">➕ Nouveau mouvement</button>
+                    </div>
+                    <div id="movements-list" class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Référence</th>
+                                    <th>Produit</th>
+                                    <th>Type</th>
+                                    <th>Quantité</th>
+                                    <th>Motif</th>
+                                    <th>Utilisateur</th>
+                                </tr>
+                            </thead>
+                            <tbody id="movements-body">
+                                <tr>
+                                    <td colspan="7" class="text-center">Chargement...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Alerts View -->
+                <div id="alerts-view" class="view">
+                    <div class="alert-info">
+                        <p>🔔 Produits avec un stock inférieur ou égal au seuil minimal</p>
+                    </div>
+                    <div id="alerts-list" class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Référence</th>
+                                    <th>Produit</th>
+                                    <th>Catégorie</th>
+                                    <th>Stock actuel</th>
+                                    <th>Stock min</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="alerts-body">
+                                <tr>
+                                    <td colspan="6" class="text-center">Chargement...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Add/Edit Product -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="product-modal-title">Ajouter un produit</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="form-group">
+                    <label for="product-name">Nom du produit *</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-reference">Référence *</label>
+                    <input type="text" id="product-reference" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-category">Catégorie</label>
+                    <select id="product-category">
+                        <option value="">Sélectionner...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product-description">Description</label>
+                    <textarea id="product-description" rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-price">Prix (FCFA) *</label>
+                        <input type="number" id="product-price" min="0" step="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-quantity">Quantité *</label>
+                        <input type="number" id="product-quantity" min="0" value="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="product-min-stock">Stock minimum</label>
+                    <input type="number" id="product-min-stock" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="product-image">URL Image</label>
+                    <input type="text" id="product-image">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-product-btn">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Add Category -->
+    <div id="category-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter une catégorie</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="category-form">
+                <div class="form-group">
+                    <label for="category-name">Nom de la catégorie *</label>
+                    <input type="text" id="category-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="category-description">Description</label>
+                    <textarea id="category-description" rows="3"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-category-btn">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Add Movement -->
+    <div id="movement-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nouveau mouvement de stock</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="movement-form">
+                <div class="form-group">
+                    <label for="movement-product">Produit *</label>
+                    <select id="movement-product" required>
+                        <option value="">Sélectionner un produit...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="movement-type">Type de mouvement *</label>
+                    <select id="movement-type" required>
+                        <option value="IN">Entrée (Ajout)</option>
+                        <option value="OUT">Sortie (Retrait)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="movement-quantity">Quantité *</label>
+                    <input type="number" id="movement-quantity" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="movement-reason">Motif</label>
+                    <textarea id="movement-reason" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="movement-user">Utilisateur</label>
+                    <input type="text" id="movement-user" value="Administrateur">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-movement-btn">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
